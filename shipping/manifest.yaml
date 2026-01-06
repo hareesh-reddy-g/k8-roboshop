@@ -44,14 +44,18 @@ spec:
           httpGet:
             path: /health
             port: liveness-port
-          initialDelaySeconds: 30
-          periodSeconds: 15
+          initialDelaySeconds: 40  # Increased from 30 to be safe
+          periodSeconds: 20        # Check less frequently
+          timeoutSeconds: 5        # Give the app 5s to respond (CRITICAL)
+          failureThreshold: 5      # Allow more retries before failing
         livenessProbe:
           httpGet:
             path: /health
             port: liveness-port
-          initialDelaySeconds: 60
-          periodSeconds: 15
+          initialDelaySeconds: 60  # Give it a full minute to boot
+          periodSeconds: 20        # Check every 20s instead of 15s
+          timeoutSeconds: 5        # Give the app 5s to respond
+          failureThreshold: 3      # Allow 3 failures before killing it
 ---
 apiVersion: v1
 kind: Service
