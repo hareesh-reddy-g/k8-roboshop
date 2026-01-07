@@ -46,14 +46,15 @@ spec:
         readinessProbe:
           httpGet:
             path: /health
-            port: liveness-port
-          failureThreshold: 1
+            port: 8080
+          initialDelaySeconds: 30  # Give it 30 seconds to start
           periodSeconds: 15
+        # Inside your shipping container spec
         livenessProbe:
           httpGet:
             path: /health
-            port: liveness-port
-          failureThreshold: 1
+            port: 8080
+          initialDelaySeconds: 30  # Give it 30 seconds to start
           periodSeconds: 15
 ---
 apiVersion: v1
