@@ -12,6 +12,7 @@ kind: Deployment
 metadata:
   name: shipping
   namespace: roboshop
+  # these are replica set labels
   labels:
     project: roboshop
     component: shipping
@@ -19,10 +20,12 @@ metadata:
 spec:
   replicas: 1
   selector:
+    # these labels are used to select pods
     matchLabels:
       project: roboshop
       component: shipping
       tier: backend
+  # pod definition
   template:
     metadata:
       labels:
@@ -44,18 +47,14 @@ spec:
           httpGet:
             path: /health
             port: liveness-port
-          initialDelaySeconds: 40  # Increased from 30 to be safe
-          periodSeconds: 20        # Check less frequently
-          timeoutSeconds: 5        # Give the app 5s to respond (CRITICAL)
-          failureThreshold: 5      # Allow more retries before failing
+          failureThreshold: 1
+          periodSeconds: 15
         livenessProbe:
           httpGet:
             path: /health
             port: liveness-port
-          initialDelaySeconds: 60  # Give it a full minute to boot
-          periodSeconds: 20        # Check every 20s instead of 15s
-          timeoutSeconds: 5        # Give the app 5s to respond
-          failureThreshold: 3      # Allow 3 failures before killing it
+          failureThreshold: 1
+          periodSeconds: 15
 ---
 apiVersion: v1
 kind: Service
@@ -69,5 +68,5 @@ spec:
     tier: backend
   ports:
     - protocol: TCP
-      port: 8080 
-      targetPort: 8080
+      port: 8080 # service port
+      targetPort: 8080 # container port
